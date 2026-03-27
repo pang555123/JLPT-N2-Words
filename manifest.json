@@ -1,0 +1,15 @@
+{
+    "name": "JLPT N2 마스터 (BY WKP)",
+    "short_name": "N2 마스터",
+    "theme_color": "#0f172a",
+    "background_color": "#0f172a",
+    "display": "standalone",
+    "start_url": "index.html",
+    "icons": [
+        {
+            "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSI4MCIgZm9udC1zaXplPSI4MCI+4pyoPC90ZXh0Pjwvc3ZnPg==",
+            "sizes": "192x192 512x512",
+            "type": "image/svg+xml"
+        }
+    ]
+}
