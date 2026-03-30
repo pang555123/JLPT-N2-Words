@@ -7,9 +7,9 @@
     "start_url": "index.html",
     "icons": [
         {
-            "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSI4MCIgZm9udC1zaXplPSI4MCI+4pyoPC90ZXh0Pjwvc3ZnPg==",
-            "sizes": "192x192 512x512",
-            "type": "image/svg+xml"
+            "src": "icon.png",
+            "sizes": "192x192 512x512 any",
+            "type": "image/png"
         }
     ]
 }
