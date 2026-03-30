@@ -212,29 +212,24 @@
     <div class="bg-blob-1"></div>
     <div class="bg-blob-2"></div>
 
-    <header style="flex-direction: column; gap: 12px; align-items: stretch;">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div style="text-align: left; display: flex; align-items: center; gap: 12px;">
-                <img src="icon.png" alt="로고" style="width: 36px; height: 36px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
-                <div>
-                    <div style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px; white-space: nowrap;">JLPT N2 마스터</div>
-                    <div style="font-size: 12px; color: var(--primary-light); font-weight: 600; margin-top: 3px; letter-spacing: 0px; opacity: 0.9;">v1.3.0 · BY WKP</div>
+    <header style="padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--header-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 10;">
+        <div style="text-align: left; display: flex; align-items: center; gap: 10px;">
+            <img src="icon.png" alt="로고" style="width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+            <div>
+                <div style="font-size: 18px; font-weight: 800; letter-spacing: -0.5px; white-space: nowrap; display: flex; align-items: center; gap: 8px;">
+                    JLPT N2 마스터
+                    <span id="header-day-badge" style="background: var(--primary); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; font-weight: 700; display: none;">전체</span>
                 </div>
-            </div>
-            <div style="display:flex; gap: 10px; align-items:center;">
-                <button onclick="toggleTheme()" style="background: var(--btn-bg); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; color: var(--text-muted); cursor: pointer; flex: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;" title="다크/라이트 모드 변경">
-                    <span id="theme-icon" style="font-size:18px;">🌙</span>
-                </button>
-                <button onclick="document.getElementById('help-modal').style.display='flex'" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 600; color: var(--primary-light); cursor: pointer; transition: 0.2s; flex: none; display:flex; align-items:center; gap:6px;" onmouseover="this.style.background='rgba(139, 92, 246, 0.3)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.2)'" title="단어장 사용 가이드">
-                    📖 사용법
-                </button>
+                <div style="font-size: 11px; color: var(--primary-light); font-weight: 600; margin-top: 2px; letter-spacing: 0px; opacity: 0.9;">v1.4.0 · BY WKP</div>
             </div>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(139, 92, 246, 0.1); padding: 8px 15px; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.3); width: 100%;">
-            <span style="font-size: 13px; font-weight: 700; color: var(--primary-light);">📚 진도 선택</span>
-            <select id="day-selector" onchange="changeDay()" style="background: transparent; color: var(--text); border: none; font-family: inherit; font-size: 14px; font-weight: 700; outline: none; cursor: pointer; text-align: right; max-width: 250px;">
-                <option style="color:#000;" value="all">전체 (로딩 중...)</option>
-            </select>
+        <div style="display:flex; gap: 8px; align-items:center;">
+            <button onclick="toggleTheme()" style="background: var(--btn-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; color: var(--text-muted); cursor: pointer; flex: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;" title="다크/라이트 모드 변경">
+                <span id="theme-icon" style="font-size:16px;">🌙</span>
+            </button>
+            <button onclick="document.getElementById('help-modal').style.display='flex'" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 600; color: var(--primary-light); cursor: pointer; transition: 0.2s; flex: none; display:flex; align-items:center; gap:6px;" onmouseover="this.style.background='rgba(139, 92, 246, 0.3)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.2)'" title="단어장 사용 가이드">
+                📖 사용법
+            </button>
         </div>
     </header>
 
@@ -281,8 +276,22 @@
     </div>
 
     <div class="app-container">
+        <!-- 🌟 새 기능: 홈(진도표) 화면 -->
+        <div id="view-home" class="view active" style="padding: 20px;">
+            <div style="text-align:center; padding: 25px 0 35px 0;">
+                <h2 style="font-size: 26px; font-weight: 800; color:var(--text); letter-spacing: -0.5px;">🚀 N2 정복을 시작할까요?</h2>
+                <p style="color:var(--primary-light); font-size:15px; font-weight: 600; margin-top:8px;">원하는 학습 진도를 선택해 주세요</p>
+            </div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-bottom: 30px;">
+                <button onclick="changeDay('all')" style="width: 100%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: #fff; font-size: 18px; font-weight: 800; padding: 18px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); margin-bottom: 20px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">📚 전체 누적 복습 (1,362 단어)</button>
+                <div id="home-day-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <!-- Day 버튼들이 동적으로 삽입됩니다 -->
+                </div>
+            </div>
+        </div>
+
         <!-- 단어장 화면 -->
-        <div id="view-flashcard" class="view active">
+        <div id="view-flashcard" class="view">
             <div class="card-container">
                 <div class="card" id="flashcard">
                     <div class="card-face card-front">
@@ -357,7 +366,11 @@
 
     <!-- 하단 메뉴 -->
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchView('flashcard')">
+        <div class="nav-item active" onclick="switchView('home')">
+            <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span>학습 홈</span>
+        </div>
+        <div class="nav-item" onclick="switchView('flashcard')">
             <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
             <span>플래시카드</span>
         </div>
@@ -390,23 +403,30 @@
         let currentDay = 'all';
 
         function initDaySelector() {
-            const selector = document.getElementById('day-selector');
-            if(!selector || typeof jlptWords === 'undefined' || jlptWords.length === 0) return;
-            selector.innerHTML = '<option style="color:#000;" value="all">전체 누적 복습 (' + jlptWords.length + '단어)</option>';
+            const grid = document.getElementById('home-day-grid');
+            if(!grid || typeof jlptWords === 'undefined' || jlptWords.length === 0) return;
             const totalDays = Math.ceil(jlptWords.length / 100);
+            let html = '';
             for(let i=1; i<=totalDays; i++) {
                 const start = (i-1)*100 + 1;
                 const end = Math.min(i*100, jlptWords.length);
-                selector.innerHTML += `<option style="color:#000;" value="${i}">Day ${i} (${start}~${end})</option>`;
+                html += `<button onclick="changeDay('${i}')" style="background: var(--btn-bg); color: var(--text); border: 1px solid var(--border); padding: 15px 10px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--btn-bg)'">Day ${i}<div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:600;">단어 ${start}~${end}</div></button>`;
             }
+            grid.innerHTML = html;
         }
 
-        function changeDay() {
-            currentDay = document.getElementById('day-selector').value;
+        function changeDay(dayVal) {
+            currentDay = dayVal;
+            const badge = document.getElementById('header-day-badge');
+            badge.style.display = 'inline-block';
+            badge.innerText = (dayVal === 'all') ? '전체 과정' : `Day ${dayVal}`;
+            
+            // 데이터 풀 로드
             loadNewFlashcard();
-            if(document.getElementById('view-quiz') && document.getElementById('view-quiz').classList.contains('active')) {
-                loadNewQuiz();
-            }
+            loadNewQuiz();
+            
+            // 자동으로 플래시카드 화면으로 이동!
+            switchView('flashcard');
         }
 
         function getRandomWord() {
@@ -746,19 +766,22 @@
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             
-            if(viewName === 'flashcard') {
-                document.getElementById('view-flashcard').classList.add('active');
+            if(viewName === 'home') {
+                document.getElementById('view-home').classList.add('active');
                 document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else if(viewName === 'flashcard') {
+                document.getElementById('view-flashcard').classList.add('active');
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
             } else if(viewName === 'quiz') {
                 document.getElementById('view-quiz').classList.add('active');
-                document.querySelectorAll('.nav-item')[1].classList.add('active');
+                document.querySelectorAll('.nav-item')[2].classList.add('active');
             } else if(viewName === 'incorrect') {
                 document.getElementById('view-incorrect').classList.add('active');
-                document.querySelectorAll('.nav-item')[2].classList.add('active');
+                document.querySelectorAll('.nav-item')[3].classList.add('active');
                 renderIncorrectList();
             } else {
                 document.getElementById('view-correct').classList.add('active');
-                document.querySelectorAll('.nav-item')[3].classList.add('active');
+                document.querySelectorAll('.nav-item')[4].classList.add('active');
                 renderCorrectList();
             }
         }
