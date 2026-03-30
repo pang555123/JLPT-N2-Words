@@ -278,12 +278,20 @@
     <div class="app-container">
         <!-- 🌟 새 기능: 홈(진도표) 화면 -->
         <div id="view-home" class="view active" style="padding: 20px;">
-            <div style="text-align:center; padding: 25px 0 35px 0;">
+            <div style="text-align:center; padding: 20px 0 30px 0;">
                 <h2 style="font-size: 26px; font-weight: 800; color:var(--text); letter-spacing: -0.5px;">🚀 N2 정복을 시작할까요?</h2>
                 <p style="color:var(--primary-light); font-size:15px; font-weight: 600; margin-top:8px;">원하는 학습 진도를 선택해 주세요</p>
             </div>
+            <!-- 🔍 통합 검색창 -->
+            <div style="position: relative; margin-bottom: 25px;">
+                <input type="text" id="search-input" placeholder="🔍 단어, 뜻, 발음으로 실시간 통합 검색..." oninput="searchWords(this.value)" style="width: 100%; padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 15px; font-weight: 600; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <div id="search-results" style="display:none; position: absolute; top: calc(100% + 5px); left: 0; width: 100%; max-height: 250px; overflow-y: auto; background: var(--modal-bg); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 12px; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></div>
+            </div>
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-bottom: 30px;">
-                <button onclick="changeDay('all')" style="width: 100%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: #fff; font-size: 18px; font-weight: 800; padding: 18px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); margin-bottom: 20px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">📚 전체 누적 복습 (1,362 단어)</button>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <button onclick="changeDay('all')" style="flex: 1; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: #fff; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">📚 통합 무작위</button>
+                    <button onclick="changeDay('star')" style="flex: 1; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: #fff; font-size: 15px; font-weight: 800; padding: 15px; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">⭐️ 즐겨찾기 복습</button>
+                </div>
                 <div id="home-day-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                     <!-- Day 버튼들이 동적으로 삽입됩니다 -->
                 </div>
@@ -295,10 +303,18 @@
             <div class="card-container">
                 <div class="card" id="flashcard">
                     <div class="card-face card-front">
+                        <div style="position:absolute; top:15px; right:15px; display:flex; gap:10px;">
+                            <button id="fc-tts-front" onclick="playTTS(currentWord.kanji, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="발음 듣기">🔊</button>
+                            <button id="fc-star-front" onclick="toggleStar(currentWord, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="즐겨찾기">☆</button>
+                        </div>
                         <div class="word-kanji" id="fc-front-kanji" onclick="copyToClipboard(this.innerText, event)" style="cursor:pointer;" title="클릭해서 단어 복사">단어 로딩중...</div>
                         <div class="hint">카드를 탭해서 뜻 확인 👈 (단어를 누르면 복사!)</div>
                     </div>
                     <div class="card-face card-back">
+                        <div style="position:absolute; top:15px; right:15px; display:flex; gap:10px;">
+                            <button id="fc-tts-back" onclick="playTTS(currentWord.kanji, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="발음 듣기">🔊</button>
+                            <button id="fc-star-back" onclick="toggleStar(currentWord, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="즐겨찾기">☆</button>
+                        </div>
                         <div class="word-kanji" id="fc-back-kanji" onclick="copyToClipboard(this.innerText, event)" style="font-size:32px; margin-bottom:5px; cursor:pointer;" title="클릭해서 단어 복사"></div>
                         <div class="word-hiragana" id="fc-hiragana"></div>
                         <div class="word-meaning" id="fc-meaning" style="margin-bottom:20px;"></div>
@@ -402,6 +418,40 @@
         let currentWord = null;
         let currentDay = 'all';
 
+        let starredWords = JSON.parse(localStorage.getItem('jlpt_starred') || '{}');
+
+        // Feature: Text to Speech (🔊)
+        function playTTS(text, event) {
+            if(event) event.stopPropagation();
+            if(!text || text === '데이터없음') return;
+            let cleanText = text.replace(/[\(\)\[\]\~\-]/g, '');
+            const u = new SpeechSynthesisUtterance(cleanText);
+            u.lang = 'ja-JP';
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+        }
+
+        // Feature: Favorites (⭐️)
+        function toggleStar(wordObj, event) {
+            if(event) event.stopPropagation();
+            if(!wordObj || wordObj.kanji === '데이터없음') return;
+            
+            if(starredWords[wordObj.kanji]) {
+                delete starredWords[wordObj.kanji];
+                if(event.target) event.target.innerText = '☆';
+                if(document.getElementById('fc-star-front')) document.getElementById('fc-star-front').innerText = '☆';
+                if(document.getElementById('fc-star-back')) document.getElementById('fc-star-back').innerText = '☆';
+                showToast('즐겨찾기 해제 완료!');
+            } else {
+                starredWords[wordObj.kanji] = wordObj;
+                if(event.target) event.target.innerText = '⭐';
+                if(document.getElementById('fc-star-front')) document.getElementById('fc-star-front').innerText = '⭐';
+                if(document.getElementById('fc-star-back')) document.getElementById('fc-star-back').innerText = '⭐';
+                showToast('⭐ 나만의 즐겨찾기에 추가됨!');
+            }
+            localStorage.setItem('jlpt_starred', JSON.stringify(starredWords));
+        }
+
         function initDaySelector() {
             const grid = document.getElementById('home-day-grid');
             if(!grid || typeof jlptWords === 'undefined' || jlptWords.length === 0) return;
@@ -410,7 +460,23 @@
             for(let i=1; i<=totalDays; i++) {
                 const start = (i-1)*100 + 1;
                 const end = Math.min(i*100, jlptWords.length);
-                html += `<button onclick="changeDay('${i}')" style="background: var(--btn-bg); color: var(--text); border: 1px solid var(--border); padding: 15px 10px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--btn-bg)'">Day ${i}<div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:600;">단어 ${start}~${end}</div></button>`;
+                
+                // Feature: Progress Tracker 시각화
+                const pool = jlptWords.slice((i-1)*100, i*100);
+                let knownCount = 0;
+                pool.forEach(w => { if(correctWords[w.kanji]) knownCount++; });
+                const percentage = Math.round((knownCount / pool.length) * 100);
+                const bgGradient = percentage >= 100 ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.4) 100%)' : 'var(--btn-bg)';
+                const borderActive = percentage === 100 ? '1px solid var(--success)' : '1px solid var(--border)';
+
+                html += `<button onclick="changeDay('${i}')" style="background: ${bgGradient}; color: var(--text); border: ${borderActive}; padding: 15px 10px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;" onmouseover="this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                    Day ${i}
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:600;">단어 ${start}~${end}</div>
+                    <div style="margin-top:8px; width:100%; height:8px; background:rgba(0,0,0,0.1); border-radius:4px; overflow:hidden;">
+                        <div style="width:${percentage}%; height:100%; background:var(--success);"></div>
+                    </div>
+                    <div style="font-size:11px; color:var(--success); margin-top:5px; font-weight:700;">${percentage}% 완벽 숙지</div>
+                </button>`;
             }
             grid.innerHTML = html;
         }
@@ -419,28 +485,98 @@
             currentDay = dayVal;
             const badge = document.getElementById('header-day-badge');
             badge.style.display = 'inline-block';
-            badge.innerText = (dayVal === 'all') ? '전체 과정' : `Day ${dayVal}`;
+            if(dayVal === 'all') badge.innerText = '전체 과정';
+            else if(dayVal === 'star') badge.innerText = '⭐️즐겨찾기';
+            else badge.innerText = `Day ${dayVal}`;
             
-            // 데이터 풀 로드
             loadNewFlashcard();
             loadNewQuiz();
-            
-            // 자동으로 플래시카드 화면으로 이동!
             switchView('flashcard');
+            
+            initDaySelector(); // 버튼 진행도 다시 계산해서 업데이트
         }
 
+        // Feature: 실시간 사이다 검색 사전 엔진 🔍
+        function searchWords(query) {
+            const resultsBox = document.getElementById('search-results');
+            if(!query || query.length < 1) {
+                resultsBox.style.display = 'none';
+                return;
+            }
+            query = query.toLowerCase();
+            const matches = jlptWords.filter(w => 
+                w.kanji.toLowerCase().includes(query) || 
+                (w.hiragana && w.hiragana.toLowerCase().includes(query)) || 
+                w.meaning.toLowerCase().includes(query)
+            ).slice(0, 15); // 최대 15개 쾌속 로딩
+            
+            if(matches.length === 0) {
+                resultsBox.innerHTML = '<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:14px;">검색 결과가 없습니다 😅</div>';
+            } else {
+                let html = '';
+                matches.forEach(w => {
+                    html += `<div style="padding: 12px 15px; border-bottom: 1px solid var(--border); cursor:pointer; background:var(--surface);" onclick="event.stopPropagation(); showSearchResultModal('${w.kanji}')" onmouseover="this.style.background='rgba(139,92,246,0.1)'" onmouseout="this.style.background='var(--surface)'">
+                        <strong style="color:var(--primary-light); font-size:16px; margin-right:8px;">${w.kanji}</strong>
+                        <span style="font-size:12px; color:var(--text-muted);">[${w.hiragana||''}] ${w.meaning}</span>
+                    </div>`;
+                });
+                resultsBox.innerHTML = html;
+            }
+            resultsBox.style.display = 'block';
+        }
+
+        async function showSearchResultModal(kanjiText) {
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('search-input').value = '';
+            
+            const w = jlptWords.find(obj => obj.kanji === kanjiText);
+            if(!w) return;
+            
+            const modal = document.getElementById('help-modal');
+            const inner = modal.querySelector('div');
+            inner.innerHTML = '<div style="text-align:center; padding:30px;"><span style="font-size:24px;">⏳</span><br><br><strong style="color:var(--primary-light);">사전 데이터를 실시간 딥 로딩 중입니다...</strong></div>';
+            modal.style.display = 'flex';
+            
+            const content = await fetchAnalysisHtml(w);
+            inner.innerHTML = `<div style="text-align:left;">
+                <h3 style="color:var(--primary-light); margin-bottom:15px; font-size:22px; border-bottom:1px solid var(--border); padding-bottom:10px;">🔍 단어 딥 다이브 파헤치기</h3>
+                ${content.replace(/<div style="padding: 5px; line-height: 1.6;">/, '<div style="padding: 5px; line-height: 1.6; margin-top:20px;">')}
+                <button onclick="document.getElementById('help-modal').style.display='none'" style="margin-top: 25px; background: var(--primary); color: #fff; width: 100%; border-radius: 12px; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer;">닫기 (다시 열공모드로!)</button>
+            </div>`;
+        }
+
+        // Feature: Anki-Smart 망각곡선 알고리즘 탑재 복습 뇌과학 엔진 🧠
         function getRandomWord() {
             if(typeof jlptWords === 'undefined' || jlptWords.length === 0) {
                 return {kanji:'데이터없음', hiragana:'', meaning:'단어장을 불러오지 못했습니다'};
             }
             let pool = jlptWords;
-            if (currentDay !== 'all') {
+            
+            if (currentDay === 'star') {
+                pool = Object.values(starredWords);
+                if(pool.length === 0) {
+                    showToast('⭐️ 아직 즐겨찾기 해둔 단어가 없습니다! 전체 범위에서 대신 랜덤 출제합니다!');
+                    pool = jlptWords;
+                }
+            } else if (currentDay !== 'all') {
                 const dayIdx = parseInt(currentDay, 10);
-                const startIdx = (dayIdx - 1) * 100;
-                const endIdx = startIdx + 100;
-                pool = jlptWords.slice(startIdx, endIdx);
-                if (pool.length === 0) pool = jlptWords;
+                pool = jlptWords.slice((dayIdx - 1) * 100, dayIdx * 100);
             }
+
+            // [Anki 알고리즘]
+            // 단계 1: 유저가 1번 이상 틀렸던 오답 단어일 경우 최우선으로 리마인드 압박 배정 (확률 35%)
+            let poolIncorrect = pool.filter(w => incorrectWords[w.kanji]);
+            if (poolIncorrect.length > 0 && Math.random() < 0.35) {
+                return poolIncorrect[Math.floor(Math.random() * poolIncorrect.length)];
+            }
+            
+            // 단계 2: 아직 [정답]을 한 번도 누르지 않은 신규 단어를 그 다음 우선순위로 노출 (확률 50%)
+            let poolNotKnown = pool.filter(w => !correctWords[w.kanji]);
+            if (poolNotKnown.length > 0 && Math.random() < 0.5) {
+                return poolNotKnown[Math.floor(Math.random() * poolNotKnown.length)];
+            }
+            
+            // 단계 3: 위 두 가지에 걸러지지 않은 경우 (이미 완벽 숙지했거나 남은 단어) 완전 랜덤 복습 출제
             return pool[Math.floor(Math.random() * pool.length)];
         }
 
@@ -463,15 +599,18 @@
             document.getElementById('fc-back-kanji').innerText = currentWord.kanji;
             
             let furiganaText = currentWord.hiragana ? currentWord.hiragana : '';
-            
-            // [버그 픽스] 한자가 하나도 없는 순수 가타카나/히라가나 단어의 경우
-            // PDF 파싱 과정에서 다른 줄의 요리가나가 잘못 섞여 들어오는 것을 방지합니다.
             if (!/[\u4e00-\u9faf\u3400-\u4dbf]/.test(currentWord.kanji)) {
-                furiganaText = ''; // 한자가 없으므로 요리가나 자체를 표시하지 않음
+                furiganaText = ''; 
             }
-
             document.getElementById('fc-hiragana').innerText = furiganaText;
             document.getElementById('fc-meaning').innerText = currentWord.meaning;
+            
+            // ⭐ 즐겨찾기 상태 렌더링
+            let isStar = starredWords[currentWord.kanji];
+            let sF = document.getElementById('fc-star-front');
+            let sB = document.getElementById('fc-star-back');
+            if(sF) sF.innerText = isStar ? '⭐' : '☆';
+            if(sB) sB.innerText = isStar ? '⭐' : '☆';
             
             // 분석 박스 초기화
             const box = document.getElementById('kanji-analysis-box');
