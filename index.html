@@ -9,10 +9,19 @@
     <title>JLPT N2 마스터</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 방금 추출한 단어 데이터 로드 -->
     <script src="words.js"></script>
     <script src="hanja_eum.js"></script>
     <style>
+        @keyframes ttsBlink {
+            0% { transform: scale(1); background: var(--surface); color: inherit; }
+            50% { transform: scale(1.15); background: var(--primary); color: #fff !important; border-color: var(--primary); }
+            100% { transform: scale(1); background: var(--surface); color: inherit; }
+        }
+        .tts-blinking {
+            animation: ttsBlink 0.8s ease-out;
+        }
         :root {
             --bg: #0f172a;
             --surface: rgba(30, 41, 59, 0.7);
@@ -304,7 +313,7 @@
                 <div class="card" id="flashcard">
                     <div class="card-face card-front">
                         <div style="position:absolute; top:15px; right:15px; display:flex; gap:10px;">
-                            <button id="fc-tts-front" onclick="playTTS(currentWord.kanji, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="발음 듣기">🔊</button>
+                            <button id="fc-tts-front" onclick="playTTS(currentWord.kanji, event, this)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:16px; color:var(--text-muted); transition: color 0.2s, background 0.2s;" onmouseover="this.style.color='var(--primary-light)'" onmouseout="this.style.color='var(--text-muted)'" title="발음 듣기"><i class="fa-solid fa-volume-high"></i></button>
                             <button id="fc-star-front" onclick="toggleStar(currentWord, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="즐겨찾기">☆</button>
                         </div>
                         <div class="word-kanji" id="fc-front-kanji" onclick="copyToClipboard(this.innerText, event)" style="cursor:pointer;" title="클릭해서 단어 복사">단어 로딩중...</div>
@@ -312,7 +321,7 @@
                     </div>
                     <div class="card-face card-back">
                         <div style="position:absolute; top:15px; right:15px; display:flex; gap:10px;">
-                            <button id="fc-tts-back" onclick="playTTS(currentWord.kanji, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="발음 듣기">🔊</button>
+                            <button id="fc-tts-back" onclick="playTTS(currentWord.kanji, event, this)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:16px; color:var(--text-muted); transition: color 0.2s, background 0.2s;" onmouseover="this.style.color='var(--primary-light)'" onmouseout="this.style.color='var(--text-muted)'" title="발음 듣기"><i class="fa-solid fa-volume-high"></i></button>
                             <button id="fc-star-back" onclick="toggleStar(currentWord, event)" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:18px;" title="즐겨찾기">☆</button>
                         </div>
                         <div class="word-kanji" id="fc-back-kanji" onclick="copyToClipboard(this.innerText, event)" style="font-size:32px; margin-bottom:5px; cursor:pointer;" title="클릭해서 단어 복사"></div>
@@ -420,15 +429,36 @@
 
         let starredWords = JSON.parse(localStorage.getItem('jlpt_starred') || '{}');
 
-        // Feature: Text to Speech (🔊)
-        function playTTS(text, event) {
+        // Feature: Text to Speech (🔊) with Cooldown & Animation
+        let isTTSPlaying = false;
+        function playTTS(text, event, btnElement) {
             if(event) event.stopPropagation();
             if(!text || text === '데이터없음') return;
+            
+            if(isTTSPlaying) return; // 중복 클릭 시 무시 (쿨타임)
+            isTTSPlaying = true;
+
+            // 깜박이는 애니메이션 효과
+            if(btnElement) {
+                btnElement.classList.remove('tts-blinking');
+                // 리플로우 꼼수(재시작)
+                void btnElement.offsetWidth;
+                btnElement.classList.add('tts-blinking');
+                setTimeout(() => {
+                    btnElement.classList.remove('tts-blinking');
+                }, 800);
+            }
+
             let cleanText = text.replace(/[\(\)\[\]\~\-]/g, '');
             const u = new SpeechSynthesisUtterance(cleanText);
             u.lang = 'ja-JP';
             u.rate = 0.9;
             window.speechSynthesis.speak(u);
+
+            // 약 1.2초 대기 후 소리 재생 제한 해제
+            setTimeout(() => {
+                isTTSPlaying = false;
+            }, 1200);
         }
 
         // Feature: Favorites (⭐️)
