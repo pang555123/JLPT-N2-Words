@@ -8,7 +8,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>JLPT N2 마스터</title>
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link href="https://fonts.cdnfonts.com/css/pretendard" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 방금 추출한 단어 데이터 로드 -->
     <script src="words.js"></script>
@@ -69,7 +72,7 @@
         html { display: flex; justify-content: center; background-color: #020617; }
 
         body {
-            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            font-family: 'Pretendard', 'Noto Sans KR', 'Noto Sans JP', sans-serif;
             background: var(--bg);
             color: var(--text);
             width: 100%;
@@ -159,15 +162,15 @@
 
         .card-back { transform: rotateY(180deg); }
 
-        .word-kanji { font-size: 48px; font-weight: 700; color: var(--card-text); margin-bottom: 8px; }
-        .word-hiragana { font-size: 21px; color: var(--primary-light); margin-bottom: 15px; letter-spacing: 2px; }
+        .word-kanji { font-family: 'Noto Sans JP', 'Pretendard', sans-serif; font-size: 48px; font-weight: 700; color: var(--card-text); margin-bottom: 8px; }
+        .word-hiragana { font-family: 'Noto Sans JP', 'Pretendard', sans-serif; font-size: 21px; color: var(--primary-light); margin-bottom: 15px; letter-spacing: 1px; }
         .word-meaning { font-size: 20px; font-weight: 600; text-align: center; }
         
         .hint { margin-top: auto; font-size: 14px; color: var(--text-muted); }
 
         .action-buttons {
             display: flex; gap: 8px; width: 100%; max-width: 340px; margin: 0 auto;
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            opacity: 1; transition: opacity 0.3s; pointer-events: auto;
         }
         .action-buttons.show { opacity: 1; pointer-events: auto; }
         
@@ -190,7 +193,7 @@
             text-align: center; border: 1px solid var(--border); margin-bottom: 30px;
         }
 
-        .quiz-kanji { font-size: 48px; font-weight: 700; margin-bottom: 15px; }
+        .quiz-kanji { font-family: 'Noto Sans JP', 'Pretendard', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 15px; }
         .quiz-prompt { font-size: 16px; color: var(--text-muted); }
 
         .quiz-options { display: flex; flex-direction: column; gap: 15px; }
@@ -236,7 +239,7 @@
             overflow: hidden;
         }
 
-        .kana-main { font-size: 25px; font-weight: 800; color: var(--text); line-height: 1; }
+        .kana-main { font-family: 'Noto Sans JP', 'Pretendard', sans-serif; font-size: 25px; font-weight: 800; color: var(--text); line-height: 1; }
         .kana-romaji { margin-top: 6px; font-size: 11px; color: var(--text-muted); font-weight: 700; }
         
     </style>
@@ -253,7 +256,7 @@
                     JLPT N2 마스터
                     <span id="header-day-badge" style="background: var(--primary); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; font-weight: 700; display: none;">전체</span>
                 </div>
-                <div style="font-size: 11px; color: var(--primary-light); font-weight: 600; margin-top: 2px; letter-spacing: 0px; opacity: 0.9;">v1.4.0 · BY WKP</div>
+                <div style="font-size: 11px; color: var(--primary-light); font-weight: 600; margin-top: 2px; letter-spacing: 0px; opacity: 0.9;">v1.5.1 · BY WKP</div>
             </div>
         </div>
         <div style="display:flex; gap: 8px; align-items:center;">
@@ -305,6 +308,33 @@
             </div>
 
             <button onclick="document.getElementById('help-modal').style.display='none'" style="margin-top: 15px; background: var(--primary); color: var(--card-text); width: 100%; border-radius: 12px; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;">닫기 (열공하기 🔥)</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:10000; justify-content:center; align-items:center; padding:20px; backdrop-filter:blur(5px);">
+        <div style="background:var(--modal-bg); color:var(--text); border:1px solid var(--border); border-radius:16px; width:100%; max-width:340px; padding:22px; box-shadow:0 20px 45px rgba(0,0,0,0.45);">
+            <div id="confirm-message" style="font-size:16px; font-weight:700; line-height:1.5; margin-bottom:18px;">기록을 초기화하시겠습니까?</div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeConfirmModal()" style="background:var(--btn-bg); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:12px; font-size:14px;">취소</button>
+                <button onclick="runConfirmAction()" style="background:var(--primary); color:#fff; border:1px solid var(--primary); border-radius:10px; padding:12px; font-size:14px;">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="update-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.68); z-index:10001; justify-content:center; align-items:center; padding:20px; backdrop-filter:blur(5px);">
+        <div style="background:var(--modal-bg); color:var(--text); border:1px solid var(--border); border-radius:18px; width:100%; max-width:380px; padding:24px; box-shadow:0 24px 55px rgba(0,0,0,0.5); max-height:85vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px;">
+                <h3 style="font-size:21px; color:var(--primary-light); margin:0;">업데이트 안내</h3>
+                <span id="update-version-label" style="font-size:12px; background:var(--btn-bg); color:var(--text-muted); border:1px solid var(--border); padding:4px 8px; border-radius:8px;">v1.5.1</span>
+            </div>
+            <div style="font-size:14px; color:var(--text); line-height:1.7; margin-bottom:18px;">
+                <ul id="update-change-list" style="padding-left:20px; margin:0;"></ul>
+            </div>
+            <label style="display:flex; align-items:center; gap:8px; color:var(--text-muted); font-size:14px; margin-bottom:16px; cursor:pointer;">
+                <input id="update-dont-show" type="checkbox" style="width:16px; height:16px;">
+                다시는 안 보기
+            </label>
+            <button onclick="closeUpdateModal()" style="background:var(--primary); color:#fff; border:1px solid var(--primary); border-radius:12px; padding:13px; width:100%; font-size:15px; font-weight:700;">닫기</button>
         </div>
     </div>
 
@@ -366,8 +396,8 @@
                 </div>
             </div>
             <div class="action-buttons" id="card-actions">
-                <button class="btn-dontknow" onclick="nextCard(false)">몰라요</button>
                 <button class="btn-know" onclick="nextCard(true)">알아요</button>
+                <button class="btn-dontknow" onclick="nextCard(false)">몰라요</button>
             </div>
         </div>
 
@@ -399,7 +429,7 @@
             <div style="text-align:center; margin-bottom: 20px;">
                 <h2 style="font-size: 24px; color:var(--text);">🔥 내 오답 랭킹</h2>
                 <p style="color:var(--text-muted); font-size:14px; margin-top:5px;">가장 많이 틀린 단어부터 순서대로 보여줍니다</p>
-                <button onclick="clearIncorrectNotes()" style="background: rgba(239, 68, 68, 0.2); color: var(--error); border: 1px solid var(--error); padding: 8px 12px; font-size:13px; margin-top:12px; border-radius:8px;">🗑️ 기록 전체 초기화</button>
+                <button onclick="clearIncorrectNotes()" style="background: rgba(239, 68, 68, 0.2); color: var(--error); border: 1px solid var(--error); padding: 8px 12px; font-size:13px; margin-top:12px; border-radius:8px;">전체 초기화</button>
             </div>
             <div id="incorrect-list" style="overflow-y: auto; flex: 1; padding-bottom: 50px;">
                 <!-- 오답 리스트 동적 렌더링 -->
@@ -411,7 +441,7 @@
             <div style="text-align:center; margin-bottom: 20px;">
                 <h2 style="font-size: 24px; color:var(--text);">✨ 내 정답 랭킹</h2>
                 <p style="color:var(--text-muted); font-size:14px; margin-top:5px;">퀴즈를 완벽하게 맞춘 단어들입니다</p>
-                <button onclick="clearCorrectNotes()" style="background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); padding: 8px 12px; font-size:13px; margin-top:12px; border-radius:8px;">🗑️ 기록 전체 초기화</button>
+                <button onclick="clearCorrectNotes()" style="background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); padding: 8px 12px; font-size:13px; margin-top:12px; border-radius:8px;">전체 초기화</button>
             </div>
             <div id="correct-list" style="overflow-y: auto; flex: 1; padding-bottom: 50px;">
                 <!-- 정답 리스트 동적 렌더링 -->
@@ -475,7 +505,17 @@
         let currentDay = 'all';
         let currentQuizMode = 'vocab';
         let currentKanaMode = 'hiragana';
+        const APP_VERSION = '1.5.1';
+        const UPDATE_NOTES = [
+            '교재 PDF와 더 비슷한 고딕 계열 글씨체로 바꿨습니다.',
+            '플래시카드에 한국식 한자 훈음을 추가했습니다.',
+            '히라가나와 가타카나를 바로 확인할 수 있는 가나표 탭을 추가했습니다.',
+            '오답/정답 기록을 단어별로 선택 삭제할 수 있게 했습니다.',
+            '기록 초기화 확인창을 앱 내부 창으로 바꿨습니다.',
+            '브라우저 탭과 홈화면 아이콘 표시를 개선했습니다.'
+        ];
         const wordCursors = { flashcard: {}, quiz: {} };
+        const pendingRemoveClicks = {};
 
         let starredWords = JSON.parse(localStorage.getItem('jlpt_starred') || '{}');
 
@@ -686,8 +726,18 @@
             return jlptWords;
         }
 
-        function getSequentialWord(mode = 'flashcard') {
+        function getStudyWordPool() {
             const pool = getCurrentWordPool();
+            if(currentDay === 'star') return pool;
+
+            const filtered = pool.filter(w => !correctWords[w.kanji]);
+            if(filtered.length > 0) return filtered;
+
+            return pool;
+        }
+
+        function getSequentialWord(mode = 'flashcard') {
+            const pool = getStudyWordPool();
             if(pool.length === 0) {
                 return {kanji:'데이터없음', hiragana:'', meaning:'단어장을 불러오지 못했습니다'};
             }
@@ -700,7 +750,7 @@
         }
 
         function getRandomOptionWord(excludedKanji) {
-            const pool = getCurrentWordPool().filter(w => w.kanji !== excludedKanji);
+            const pool = getStudyWordPool().filter(w => w.kanji !== excludedKanji);
             const fallbackPool = jlptWords.filter(w => w.kanji !== excludedKanji);
             const source = pool.length >= 3 ? pool : fallbackPool;
             if(source.length === 0) {
@@ -737,7 +787,7 @@
             const huneumBox = document.getElementById('fc-huneum');
             const huneumText = getKoreanHanjaHuneumText(currentWord);
             if(huneumBox) {
-                huneumBox.innerHTML = huneumText ? `<strong style="color:var(--primary-light);">한국식 한자</strong> ${huneumText}` : '';
+                huneumBox.innerHTML = huneumText ? `<strong style="color:var(--primary-light);">한자</strong> ${huneumText}` : '';
             }
             
             // ⭐ 즐겨찾기 상태 렌더링
@@ -1166,12 +1216,85 @@
             }).join('');
         }
 
+        let pendingConfirmAction = null;
+        function openConfirmModal(message, onConfirm) {
+            pendingConfirmAction = onConfirm;
+            const modal = document.getElementById('confirm-modal');
+            const messageBox = document.getElementById('confirm-message');
+            if(messageBox) messageBox.innerText = message;
+            if(modal) modal.style.display = 'flex';
+        }
+
+        function closeConfirmModal() {
+            pendingConfirmAction = null;
+            const modal = document.getElementById('confirm-modal');
+            if(modal) modal.style.display = 'none';
+        }
+
+        function runConfirmAction() {
+            const action = pendingConfirmAction;
+            closeConfirmModal();
+            if(action) action();
+        }
+
+        function confirmRemoveClick(key, btn) {
+            const now = Date.now();
+            const lastClick = pendingRemoveClicks[key] || 0;
+            pendingRemoveClicks[key] = now;
+
+            if(now - lastClick <= 1800) {
+                delete pendingRemoveClicks[key];
+                return true;
+            }
+
+            if(btn) {
+                btn.style.background = 'rgba(239,68,68,0.35)';
+                btn.style.transform = 'scale(1.08)';
+                btn.innerHTML = '삭제';
+                setTimeout(() => {
+                    if(pendingRemoveClicks[key] === now) {
+                        delete pendingRemoveClicks[key];
+                        btn.style.background = 'rgba(239,68,68,0.12)';
+                        btn.style.transform = 'scale(1)';
+                        btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+                    }
+                }, 1800);
+            }
+            return false;
+        }
+
+        function showUpdateModalIfNeeded() {
+            const hiddenVersion = localStorage.getItem('jlpt_update_hidden_version');
+            if(hiddenVersion === APP_VERSION) return;
+
+            const modal = document.getElementById('update-modal');
+            const versionLabel = document.getElementById('update-version-label');
+            const list = document.getElementById('update-change-list');
+            const checkbox = document.getElementById('update-dont-show');
+
+            if(versionLabel) versionLabel.innerText = `v${APP_VERSION}`;
+            if(list) {
+                list.innerHTML = UPDATE_NOTES.map(note => `<li style="margin-bottom:7px;">${note}</li>`).join('');
+            }
+            if(checkbox) checkbox.checked = false;
+            if(modal) modal.style.display = 'flex';
+        }
+
+        function closeUpdateModal() {
+            const checkbox = document.getElementById('update-dont-show');
+            if(checkbox && checkbox.checked) {
+                localStorage.setItem('jlpt_update_hidden_version', APP_VERSION);
+            }
+            const modal = document.getElementById('update-modal');
+            if(modal) modal.style.display = 'none';
+        }
+
         // --- 🌟 오답장 랜더링 로직 ---
         function renderIncorrectList() {
             const container = document.getElementById('incorrect-list');
             let items = Object.values(incorrectWords).sort((a,b) => b.count - a.count);
             if(items.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:50px; font-size:16px;">🎉 틀린 단어가 전멸했습니다!<br>완벽합니다!</div>';
+                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:50px; font-size:16px;">틀린 단어가 없습니다.<br>완벽합니다.</div>';
                 return;
             }
             let html = '';
@@ -1182,8 +1305,13 @@
                         <strong style="font-size:24px; color:var(--primary-light);">${w.kanji} <span style="font-size:12px; opacity:0.6;">📋</span></strong>
                         <div style="font-size:14px; color:var(--text-muted); margin-top:5px;">[${reading}] ${w.meaning}</div>
                     </div>
-                    <div style="background:rgba(239, 68, 68, 0.2); color:var(--error); border-radius:12px; min-width:40px; height:40px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:18px; padding:0 10px;">
-                        ❌ ${w.count}
+                    <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+                        <div style="background:rgba(239, 68, 68, 0.2); color:var(--error); border-radius:12px; min-width:40px; height:36px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:17px; padding:0 10px;">
+                            ${w.count}
+                        </div>
+                        <button onclick="removeIncorrectWord('${encodeURIComponent(w.kanji)}', event, this)" title="두 번 눌러 기록 제거" style="background:rgba(239,68,68,0.12); color:var(--error); border:1px solid rgba(239,68,68,0.45); border-radius:8px; min-width:34px; height:30px; padding:0 8px; font-size:12px; font-weight:700; flex:none; display:flex; justify-content:center; align-items:center;">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
                     </div>
                 </div>`;
             });
@@ -1191,11 +1319,20 @@
         }
 
         function clearIncorrectNotes() {
-            if(confirm("🔥 정말로 모든 오답 기록을 초기화하시겠습니까?")) {
+            openConfirmModal('정말로 모든 오답 기록을 초기화하시겠습니까?', () => {
                 incorrectWords = {};
                 localStorage.setItem('jlpt_incorrect', JSON.stringify(incorrectWords));
                 renderIncorrectList();
-            }
+            });
+        }
+
+        function removeIncorrectWord(encodedKanji, event, btn) {
+            if(event) event.stopPropagation();
+            const kanji = decodeURIComponent(encodedKanji);
+            if(!confirmRemoveClick(`incorrect:${kanji}`, btn)) return;
+            delete incorrectWords[kanji];
+            localStorage.setItem('jlpt_incorrect', JSON.stringify(incorrectWords));
+            renderIncorrectList();
         }
 
         // --- 🌟 정답장 랜더링 로직 ---
@@ -1203,7 +1340,7 @@
             const container = document.getElementById('correct-list');
             let items = Object.values(correctWords).sort((a,b) => b.count - a.count);
             if(items.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:50px; font-size:16px;">아직 정답을 맞춘 단어가 없습니다.<br>플래시카드나 퀴즈를 풀어보세요! 🏃‍♂️</div>';
+                container.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:50px; font-size:16px;">아직 정답을 맞춘 단어가 없습니다.<br>플래시카드나 퀴즈를 풀어보세요.</div>';
                 return;
             }
             let html = '';
@@ -1214,8 +1351,13 @@
                         <strong style="font-size:24px; color:var(--primary-light);">${w.kanji} <span style="font-size:12px; opacity:0.6;">📋</span></strong>
                         <div style="font-size:14px; color:var(--text-muted); margin-top:5px;">[${reading}] ${w.meaning}</div>
                     </div>
-                    <div style="background:rgba(16, 185, 129, 0.2); color:var(--success); border-radius:12px; min-width:40px; height:40px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:18px; padding:0 10px;">
-                        ✔️ ${w.count}
+                    <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+                        <div style="background:rgba(16, 185, 129, 0.2); color:var(--success); border-radius:12px; min-width:40px; height:36px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:17px; padding:0 10px;">
+                            ${w.count}
+                        </div>
+                        <button onclick="removeCorrectWord('${encodeURIComponent(w.kanji)}', event, this)" title="두 번 눌러 기록 제거" style="background:rgba(239,68,68,0.12); color:var(--error); border:1px solid rgba(239,68,68,0.45); border-radius:8px; min-width:34px; height:30px; padding:0 8px; font-size:12px; font-weight:700; flex:none; display:flex; justify-content:center; align-items:center;">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
                     </div>
                 </div>`;
             });
@@ -1223,11 +1365,20 @@
         }
 
         function clearCorrectNotes() {
-            if(confirm("✨ 정말로 모든 정답 기록을 초기화하시겠습니까?")) {
+            openConfirmModal('정말로 모든 정답 기록을 초기화하시겠습니까?', () => {
                 correctWords = {};
                 localStorage.setItem('jlpt_correct', JSON.stringify(correctWords));
                 renderCorrectList();
-            }
+            });
+        }
+
+        function removeCorrectWord(encodedKanji, event, btn) {
+            if(event) event.stopPropagation();
+            const kanji = decodeURIComponent(encodedKanji);
+            if(!confirmRemoveClick(`correct:${kanji}`, btn)) return;
+            delete correctWords[kanji];
+            localStorage.setItem('jlpt_correct', JSON.stringify(correctWords));
+            renderCorrectList();
         }
 
         // --- 뷰 전환 로직 ---
@@ -1315,6 +1466,7 @@
             renderKanaTable();
             loadNewFlashcard();
             loadNewQuiz();
+            showUpdateModalIfNeeded();
         };
     </script>
 </body>
