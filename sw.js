@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jlpt-n2-master-v1';
+const CACHE_NAME = 'jlpt-n2-master-v2';
 
 // 1. 앱을 처음 설치할 때 폰에 가둬둘 핵심 파일 목록 (앱 뼈대 + 1,362 단어 데이터베이스 전체)
 const ASSETS_TO_CACHE = [
@@ -6,6 +6,7 @@ const ASSETS_TO_CACHE = [
   '/index.html',
   '/manifest.json',
   '/words.js',
+  '/questions.js',
   '/hanja_eum.js',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&family=Noto+Sans+KR:wght@400;700&display=swap'
 ];

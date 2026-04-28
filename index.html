@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 방금 추출한 단어 데이터 로드 -->
     <script src="words.js"></script>
+    <script src="questions.js"></script>
     <script src="hanja_eum.js"></script>
     <style>
         @keyframes ttsBlink {
@@ -348,14 +349,19 @@
 
         <!-- 퀴즈 화면 -->
         <div id="view-quiz" class="view" style="overflow-y: auto;">
+            <div style="display:flex; gap:8px; margin-bottom:16px;">
+                <button id="quiz-mode-vocab" onclick="setQuizMode('vocab')" style="background:var(--primary); color:#fff; border:1px solid var(--primary); border-radius:10px; padding:10px; font-size:14px;">단어 퀴즈</button>
+                <button id="quiz-mode-practice" onclick="setQuizMode('practice')" style="background:var(--btn-bg); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:10px; font-size:14px;">PDF 문제</button>
+            </div>
             <div class="quiz-question" onclick="toggleDeepAnalysis('quiz', event)" style="cursor: pointer; position: relative;">
-                <div class="quiz-prompt" style="line-height:1.4;">
+                <div class="quiz-prompt" id="qz-prompt" style="line-height:1.4;">
                     알맞은 뜻 고르기
                     <span style="display:inline-block; background:rgba(139,92,246,0.3); color:var(--primary-light); padding:2px 10px; border-radius:12px; font-size:13px; font-weight:600; margin-left:8px; border:1px solid rgba(139,92,246,0.5);">
                         💡 힌트 보기
                     </span>
                 </div>
                 <div class="quiz-kanji" id="qz-kanji" style="margin-bottom:5px; margin-top:10px;">로딩중</div>
+                <div id="qz-extra" style="font-size:14px; color:var(--text-muted); line-height:1.5;"></div>
                 
                 <!-- 팝업 오버레이 형태로 변경하여 정답 버튼들을 아래로 밀어내지 않음 -->
                 <div id="quiz-analysis-box" style="display:none; position:absolute; z-index:100; top:calc(100% + 5px); left:0; width:100%; background:var(--modal-bg); backdrop-filter:blur(15px); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:15px; font-size:14px; text-align:left; max-height:280px; overflow-y:auto; color:var(--text); box-shadow:0 15px 40px rgba(0,0,0,0.8);"></div>
@@ -426,6 +432,7 @@
         // PDF에서 파싱된 jlptWords 배열을 사용합니다.
         let currentWord = null;
         let currentDay = 'all';
+        let currentQuizMode = 'vocab';
 
         let starredWords = JSON.parse(localStorage.getItem('jlpt_starred') || '{}');
 
@@ -819,11 +826,48 @@
 
         // --- 퀴즈 로직 ---
         let currentQuizWord = null;
+        let currentPracticeQuestion = null;
+
+        function setQuizMode(mode) {
+            currentQuizMode = mode;
+            const vocabBtn = document.getElementById('quiz-mode-vocab');
+            const practiceBtn = document.getElementById('quiz-mode-practice');
+            const activeStyle = (btn) => {
+                btn.style.background = 'var(--primary)';
+                btn.style.color = '#fff';
+                btn.style.borderColor = 'var(--primary)';
+            };
+            const inactiveStyle = (btn) => {
+                btn.style.background = 'var(--btn-bg)';
+                btn.style.color = 'var(--text)';
+                btn.style.borderColor = 'var(--border)';
+            };
+            if(mode === 'practice') {
+                inactiveStyle(vocabBtn);
+                activeStyle(practiceBtn);
+            } else {
+                activeStyle(vocabBtn);
+                inactiveStyle(practiceBtn);
+            }
+            loadNewQuiz();
+        }
+
         function loadNewQuiz() {
+            if (currentQuizMode === 'practice') {
+                loadPracticeQuestion();
+                return;
+            }
+
             currentQuizWord = getRandomWord();
             if (currentQuizWord.kanji === '데이터없음') return;
 
+            currentPracticeQuestion = null;
+            document.getElementById('qz-prompt').innerHTML = `알맞은 뜻 고르기
+                    <span style="display:inline-block; background:rgba(139,92,246,0.3); color:var(--primary-light); padding:2px 10px; border-radius:12px; font-size:13px; font-weight:600; margin-left:8px; border:1px solid rgba(139,92,246,0.5);">
+                        💡 힌트 보기
+                    </span>`;
             document.getElementById('qz-kanji').innerText = currentQuizWord.kanji;
+            document.getElementById('qz-extra').innerText = '';
             
             // 힌트 박스 초기화
             const hintBox = document.getElementById('quiz-analysis-box');
@@ -852,6 +896,37 @@
             });
         }
 
+        function loadPracticeQuestion() {
+            const hasQuestions = typeof jlptQuestions !== 'undefined' && jlptQuestions.length > 0;
+            const container = document.getElementById('qz-options');
+            const hintBox = document.getElementById('quiz-analysis-box');
+            if(hintBox) hintBox.style.display = 'none';
+
+            currentQuizWord = null;
+            if(!hasQuestions) {
+                currentPracticeQuestion = null;
+                document.getElementById('qz-prompt').innerText = 'PDF 문제';
+                document.getElementById('qz-kanji').innerText = '문제 없음';
+                document.getElementById('qz-extra').innerText = 'questions.js를 불러오지 못했습니다.';
+                container.innerHTML = '';
+                return;
+            }
+
+            currentPracticeQuestion = jlptQuestions[Math.floor(Math.random() * jlptQuestions.length)];
+            document.getElementById('qz-prompt').innerText = currentPracticeQuestion.prompt;
+            document.getElementById('qz-kanji').innerText = currentPracticeQuestion.stem;
+            document.getElementById('qz-extra').innerText = currentPracticeQuestion.source || '';
+
+            container.innerHTML = '';
+            currentPracticeQuestion.options.forEach((opt) => {
+                let btn = document.createElement('button');
+                btn.className = 'quiz-btn';
+                btn.innerText = `${opt.label}. ${opt.text}`;
+                btn.onclick = () => selectPracticeAnswer(btn, opt.label === currentPracticeQuestion.answer);
+                container.appendChild(btn);
+            });
+        }
+
         function selectAnswer(btn, isCorrect) {
             if(isCorrect) {
                 btn.classList.add('correct');
@@ -862,6 +937,22 @@
             } else {
                 btn.classList.add('wrong');
                 if (currentQuizWord) saveIncorrectWord(currentQuizWord); // 퀴즈 오답도 기록!
+                setTimeout(() => btn.classList.remove('wrong'), 800);
+            }
+        }
+
+        function selectPracticeAnswer(btn, isCorrect) {
+            if(isCorrect) {
+                btn.classList.add('correct');
+                if(currentPracticeQuestion && currentPracticeQuestion.meaning) {
+                    document.getElementById('qz-extra').innerText = `뜻: ${currentPracticeQuestion.meaning}`;
+                }
+                setTimeout(() => loadPracticeQuestion(), 900);
+            } else {
+                btn.classList.add('wrong');
+                if(currentPracticeQuestion && currentPracticeQuestion.meaning) {
+                    document.getElementById('qz-extra').innerText = `힌트: ${currentPracticeQuestion.meaning}`;
+                }
                 setTimeout(() => btn.classList.remove('wrong'), 800);
             }
         }
