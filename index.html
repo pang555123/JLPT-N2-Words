@@ -263,7 +263,7 @@
             <button onclick="toggleTheme()" style="background: var(--btn-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; color: var(--text-muted); cursor: pointer; flex: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;" title="다크/라이트 모드 변경">
                 <span id="theme-icon" style="font-size:16px;">🌙</span>
             </button>
-            <button onclick="document.getElementById('help-modal').style.display='flex'" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 600; color: var(--primary-light); cursor: pointer; transition: 0.2s; flex: none; display:flex; align-items:center; gap:6px;" onmouseover="this.style.background='rgba(139, 92, 246, 0.3)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.2)'" title="단어장 사용 가이드">
+            <button id="help-button" onclick="document.getElementById('help-modal').style.display='flex'" style="background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 600; color: var(--primary-light); cursor: pointer; transition: 0.2s; flex: none; display:flex; align-items:center; gap:6px;" onmouseover="this.style.background='rgba(139, 92, 246, 0.3)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.2)'" title="단어장 사용 가이드">
                 📖 사용법
             </button>
         </div>
@@ -1385,6 +1385,8 @@
         function switchView(viewName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const helpButton = document.getElementById('help-button');
+            if(helpButton) helpButton.style.display = viewName === 'home' ? 'flex' : 'none';
             
             if(viewName === 'home') {
                 document.getElementById('view-home').classList.add('active');
