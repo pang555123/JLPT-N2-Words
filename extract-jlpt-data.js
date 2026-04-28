@@ -46,10 +46,26 @@ function extractWords(text) {
   const words = [];
   const seen = new Set();
   const lines = text.split(/\r?\n/);
+  let currentPage = 0;
+  let currentLessonId = '';
+  let currentLessonTitle = '';
 
   for (let i = 0; i < lines.length; i += 1) {
     const raw = lines[i].trim();
-    if (!raw || raw.includes('---PAGE') || raw.includes('저작권자') || raw.includes('해커스')) {
+    const pageMatch = raw.match(/^---PAGE\s+(\d+)---$/);
+    if (pageMatch) {
+      currentPage = Number(pageMatch[1]) + 1;
+      continue;
+    }
+
+    const lessonMatch = raw.match(/^(\d+)日[┃\s\t]+(.+?)(?:\s+\d+)?$/);
+    if (lessonMatch && lessonMatch[2].includes('단어')) {
+      currentLessonId = `lesson-${lessonMatch[1]}`;
+      currentLessonTitle = normalizeText(lessonMatch[2]);
+      continue;
+    }
+
+    if (!raw || raw.includes('저작권자') || raw.includes('해커스')) {
       continue;
     }
 
@@ -81,7 +97,14 @@ function extractWords(text) {
       }
 
       seen.add(key);
-      words.push({ kanji, hiragana, meaning });
+      words.push({
+        kanji,
+        hiragana,
+        meaning,
+        lessonId: currentLessonId || 'lesson-etc',
+        lessonTitle: currentLessonTitle || '기타 단어',
+        sourcePage: currentPage || null,
+      });
     }
   }
 
